@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/auth_service.dart';
+import '../models/user_role.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -134,97 +135,126 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _crearCuenta() async {
-    final resultado = await showDialog<Map<String, String>>(
+    final resultado = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) {
         final emailController = TextEditingController();
         final passwordController = TextEditingController();
         final nombreController = TextEditingController();
         final formKey = GlobalKey<FormState>();
+        UserRole selectedRole = UserRole.empleado;
 
-        return AlertDialog(
-          title: const Text('Crear Cuenta Nueva'),
-          content: SingleChildScrollView(
-            child: Form(
-              key: formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextFormField(
-                    controller: nombreController,
-                    decoration: const InputDecoration(
-                      labelText: 'Nombre completo',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.person),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Ingrese su nombre';
-                      }
-                      return null;
-                    },
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              title: const Text('Crear Cuenta Nueva'),
+              content: SingleChildScrollView(
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextFormField(
+                        controller: nombreController,
+                        decoration: const InputDecoration(
+                          labelText: 'Nombre completo',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.person),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Ingrese su nombre';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: const InputDecoration(
+                          labelText: 'Correo electrónico',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.email),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Ingrese su correo';
+                          }
+                          if (!value.contains('@')) {
+                            return 'Correo inválido';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: passwordController,
+                        obscureText: true,
+                        decoration: const InputDecoration(
+                          labelText: 'Contraseña',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.lock),
+                          helperText: 'Mínimo 6 caracteres',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Ingrese una contraseña';
+                          }
+                          if (value.length < 6) {
+                            return 'Mínimo 6 caracteres';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      DropdownButtonFormField<UserRole>(
+                        value: selectedRole,
+                        decoration: const InputDecoration(
+                          labelText: 'Rol del Usuario',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.badge),
+                          helperText: 'Selecciona el rol apropiado',
+                        ),
+                        items: UserRole.values.map((UserRole role) {
+                          return DropdownMenuItem<UserRole>(
+                            value: role,
+                            child: Text(role.displayName),
+                          );
+                        }).toList(),
+                        onChanged: (UserRole? newRole) {
+                          if (newRole != null) {
+                            setStateDialog(() {
+                              selectedRole = newRole;
+                            });
+                          }
+                        },
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: 'Correo electrónico',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.email),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Ingrese su correo';
-                      }
-                      if (!value.contains('@')) {
-                        return 'Correo inválido';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: passwordController,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Contraseña',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.lock),
-                      helperText: 'Mínimo 6 caracteres',
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Ingrese una contraseña';
-                      }
-                      if (value.length < 6) {
-                        return 'Mínimo 6 caracteres';
-                      }
-                      return null;
-                    },
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancelar'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  Navigator.pop(context, {
-                    'nombre': nombreController.text,
-                    'email': emailController.text,
-                    'password': passwordController.text,
-                  });
-                }
-              },
-              child: const Text('Registrar'),
-            ),
-          ],
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancelar'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (formKey.currentState!.validate()) {
+                      Navigator.pop(context, {
+                        'nombre': nombreController.text,
+                        'email': emailController.text,
+                        'password': passwordController.text,
+                        'rol': selectedRole,
+                      });
+                    }
+                  },
+                  child: const Text('Registrar'),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -237,10 +267,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       final authService = Provider.of<AuthService>(context, listen: false);
-      final usuario = await authService.signUp(
-        resultado['email']!,
-        resultado['password']!,
-        resultado['nombre']!,
+      final partes = resultado['nombre']!.trim().split(' ');
+      final nombre = partes.isNotEmpty ? partes.first : resultado['nombre']!;
+      final apellido = partes.length > 1 ? partes.sublist(1).join(' ') : '';
+
+      final usuario = await authService.register(
+        email: resultado['email']!,
+        password: resultado['password']!,
+        nombre: nombre,
+        apellido: apellido,
+        rol: resultado['rol'] as UserRole,
       );
 
       if (usuario != null && mounted) {

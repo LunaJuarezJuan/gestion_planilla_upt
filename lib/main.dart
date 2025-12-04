@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'firebase_options.dart';
 import 'services/auth_service.dart';
 import 'services/notification_service.dart';
@@ -12,6 +13,9 @@ import 'screens/historial_pagos_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Inicializar formatos de fecha en español
+  await initializeDateFormatting('es', null);
   
   // Inicializar Firebase con las opciones generadas
   await Firebase.initializeApp(
@@ -53,6 +57,16 @@ class MyApp extends StatelessWidget {
           '/crear-planilla': (context) => const CrearPlanillaScreen(),
           '/mis-boletas': (context) => const MisBoletasScreen(),
           '/historial-pagos': (context) => const HistorialPagosScreen(),
+          '/listar-planillas': (context) => const MisBoletasScreen(),
+          '/empleados': (context) => const MisBoletasScreen(),
+          '/pendientes-rrhh': (context) => const MisBoletasScreen(),
+          '/pendientes-gerente': (context) => const MisBoletasScreen(),
+          '/reportes': (context) => const MisBoletasScreen(),
+          '/pendientes-tesoreria': (context) => const MisBoletasScreen(),
+          '/pagos-realizados': (context) => const MisBoletasScreen(),
+          '/subir-comprobantes': (context) => const MisBoletasScreen(),
+          '/pendientes-contabilidad': (context) => const MisBoletasScreen(),
+          '/registros-contables': (context) => const MisBoletasScreen(),
         },
       ),
     );
