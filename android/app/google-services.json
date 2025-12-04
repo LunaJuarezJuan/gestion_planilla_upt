@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "597617290022",
+    "project_id": "bdevm3u",
+    "storage_bucket": "bdevm3u.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:597617290022:android:ca720058b77a26d8a1afe7",
+        "android_client_info": {
+          "package_name": "com.evu3.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmqrxEhr_sMDxkUnSMOl8Raf54t6g9Ow0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:597617290022:android:c126d7214fffcfd7a1afe7",
+        "android_client_info": {
+          "package_name": "com.example.gestion_planilla_upt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmqrxEhr_sMDxkUnSMOl8Raf54t6g9Ow0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
