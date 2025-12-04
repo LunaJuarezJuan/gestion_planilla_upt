@@ -7,6 +7,8 @@ import 'services/notification_service.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/crear_planilla_screen.dart';
+import 'screens/mis_boletas_screen.dart';
+import 'screens/historial_pagos_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,7 +51,8 @@ class MyApp extends StatelessWidget {
           '/login': (context) => const LoginScreen(),
           '/home': (context) => const HomeScreen(),
           '/crear-planilla': (context) => const CrearPlanillaScreen(),
-          // Aquí se agregarán más rutas para las otras pantallas
+          '/mis-boletas': (context) => const MisBoletasScreen(),
+          '/historial-pagos': (context) => const HistorialPagosScreen(),
         },
       ),
     );

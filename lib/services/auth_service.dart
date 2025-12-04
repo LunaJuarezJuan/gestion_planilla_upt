@@ -84,6 +84,21 @@ class AuthService {
     }
   }
 
+  // Registro simplificado (para auto-registro desde login)
+  Future<Usuario?> signUp(String email, String password, String nombreCompleto) async {
+    final partes = nombreCompleto.trim().split(' ');
+    final nombre = partes.isNotEmpty ? partes.first : nombreCompleto;
+    final apellido = partes.length > 1 ? partes.sublist(1).join(' ') : '';
+
+    return await register(
+      email: email,
+      password: password,
+      nombre: nombre,
+      apellido: apellido,
+      rol: UserRole.empleado, // Por defecto, los usuarios auto-registrados son empleados
+    );
+  }
+
   // Cerrar sesión
   Future<void> signOut() async {
     await _auth.signOut();

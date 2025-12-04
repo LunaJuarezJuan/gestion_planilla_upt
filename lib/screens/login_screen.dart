@@ -133,6 +133,138 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Future<void> _crearCuenta() async {
+    final resultado = await showDialog<Map<String, String>>(
+      context: context,
+      builder: (context) {
+        final emailController = TextEditingController();
+        final passwordController = TextEditingController();
+        final nombreController = TextEditingController();
+        final formKey = GlobalKey<FormState>();
+
+        return AlertDialog(
+          title: const Text('Crear Cuenta Nueva'),
+          content: SingleChildScrollView(
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: nombreController,
+                    decoration: const InputDecoration(
+                      labelText: 'Nombre completo',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.person),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Ingrese su nombre';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
+                      labelText: 'Correo electrónico',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.email),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Ingrese su correo';
+                      }
+                      if (!value.contains('@')) {
+                        return 'Correo inválido';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: passwordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Contraseña',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.lock),
+                      helperText: 'Mínimo 6 caracteres',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Ingrese una contraseña';
+                      }
+                      if (value.length < 6) {
+                        return 'Mínimo 6 caracteres';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (formKey.currentState!.validate()) {
+                  Navigator.pop(context, {
+                    'nombre': nombreController.text,
+                    'email': emailController.text,
+                    'password': passwordController.text,
+                  });
+                }
+              },
+              child: const Text('Registrar'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (resultado == null) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final authService = Provider.of<AuthService>(context, listen: false);
+      final usuario = await authService.signUp(
+        resultado['email']!,
+        resultado['password']!,
+        resultado['nombre']!,
+      );
+
+      if (usuario != null && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Cuenta creada exitosamente'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.of(context).pushReplacementNamed('/home');
+      } else {
+        _mostrarError('No se pudo crear la cuenta');
+      }
+    } catch (e) {
+      _mostrarError('Error al crear cuenta: ${e.toString()}');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -270,6 +402,27 @@ class _LoginScreenState extends State<LoginScreen> {
                             '¿Olvidaste tu contraseña?',
                             style: TextStyle(
                               color: Colors.blue.shade700,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Divider(),
+                        const SizedBox(height: 8),
+                        OutlinedButton(
+                          onPressed: _isLoading ? null : _crearCuenta,
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.blue.shade700,
+                            side: BorderSide(color: Colors.blue.shade700),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            minimumSize: const Size(double.infinity, 50),
+                          ),
+                          child: const Text(
+                            'CREAR CUENTA',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),

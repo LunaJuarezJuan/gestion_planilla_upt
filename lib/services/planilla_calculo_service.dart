@@ -65,14 +65,16 @@ class PlanillaCalculoService {
       bonificaciones.addAll(bonificacionesAdicionales);
     }
 
-    final totalDeducciones = deducciones.values.fold(0.0, (sum, valor) => sum + valor);
-    final totalBonificaciones = bonificaciones.values.fold(0.0, (sum, valor) => sum + valor);
+    final totalBonificaciones = bonificaciones.values.fold(0.0, (sum, item) => sum + item);
+    final totalDeducciones = deducciones.values.fold(0.0, (sum, item) => sum + item);
     final netoAPagar = montoHoras + totalBonificaciones - totalDeducciones;
+    final sueldoBruto = montoHoras + totalBonificaciones;
 
     return DetallePlanilla(
       id: '',
       empleadoId: empleado.id,
       nombreEmpleado: empleado.nombreCompleto,
+      empleadoEmail: empleado.email ?? '',
       salarioBase: empleado.salarioBase,
       horasTrabajadas: horasTrabajadas,
       montoHoras: montoHoras,
@@ -81,6 +83,7 @@ class PlanillaCalculoService {
       totalDeducciones: totalDeducciones,
       totalBonificaciones: totalBonificaciones,
       netoAPagar: netoAPagar,
+      sueldoBruto: sueldoBruto,
     );
   }
 

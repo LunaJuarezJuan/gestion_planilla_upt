@@ -199,4 +199,37 @@ class PlanillaService {
       return null;
     }
   }
+
+  // Obtener todas las planillas (alias para getAllPlanillas)
+  Stream<List<Planilla>> obtenerTodasPlanillas() {
+    return getAllPlanillas();
+  }
+
+  // Obtener planillas completadas
+  Stream<List<Planilla>> obtenerPlanillasCompletadas() {
+    return getPlanillasPorEstado(PlanillaEstado.completada);
+  }
+
+  // Obtener detalle de planilla por email de empleado
+  Future<DetallePlanilla?> obtenerDetallePorEmpleadoEmail(
+    String planillaId,
+    String emailEmpleado,
+  ) async {
+    try {
+      final planilla = await getPlanilla(planillaId);
+      if (planilla == null) return null;
+
+      // Buscar el detalle que corresponde al empleado
+      for (final detalle in planilla.detalles) {
+        if (detalle.empleadoEmail == emailEmpleado) {
+          return detalle;
+        }
+      }
+
+      return null;
+    } catch (e) {
+      print('Error obteniendo detalle por empleado: $e');
+      return null;
+    }
+  }
 }
